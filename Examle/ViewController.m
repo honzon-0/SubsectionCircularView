@@ -14,6 +14,7 @@
 @interface ViewController ()
 @property (nonatomic ,strong)SubsectionCircularView *circularView;
 @property (nonatomic ,strong)NSTimer *timer;
+@property (nonatomic ,assign)BOOL isShaper;
 @end
 
 @implementation ViewController
@@ -21,8 +22,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    SubsectionCircularView *circularView =  [SubsectionCircularView createSubsectionCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 200, 200) superView:self.view instanceCount:1 maxInstanceCount:180];
+#define ShaperCircularView 0
+#if ShaperCircularView
+    SubsectionCircularView *circularView =  [SubsectionCircularView createShaperCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 200, 200) superView:self.view instanceCount:1 maxInstanceCount:40];
+    self.isShaper = YES;
+#else
+    SubsectionCircularView *circularView =  [SubsectionCircularView createSubsectionCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 200, 200) superView:self.view instanceCount:1 maxInstanceCount:40];
+    self.isShaper = NO;
+#endif
+   
     self.circularView = circularView;
     [self addCircularViewTimer];
     
@@ -44,7 +52,12 @@
 }
 
 - (void)stop{
-    self.circularView.instanceCount = 1;
+    if (self.isShaper) {
+        self.circularView.progress = 0.0;
+    }else {
+        self.circularView.instanceCount = 1;
+    }
+   
     [self.timer invalidate];
     self.timer = nil;
 }
@@ -56,9 +69,10 @@
 }
 
 - (void)changeCircularView {
-//    self.circularView.progress = self.circularView.progress + 0.05;
-    self.circularView.instanceCount ++;
-    if (self.circularView.instanceCount == self.circularView.maxInstanceCount) {
+    self.circularView.progress = self.circularView.progress + 0.05;
+    if (self.isShaper && self.circularView.progress >= 1.0) {
+        [self stop];
+    }else if (self.circularView.instanceCount >= self.circularView.maxInstanceCount) {
         [self stop];
     }
 }

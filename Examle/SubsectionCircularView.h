@@ -14,4 +14,5 @@
 @property (nonatomic, assign, readonly)NSUInteger maxInstanceCount;
 @property (nonatomic, strong, readonly)UILabel *textLabel;
 + (SubsectionCircularView *)createSubsectionCircularViewWithFrame:(CGRect)frame superView:(UIView *)superView  instanceCount:(NSUInteger)instanceCount maxInstanceCount:(NSUInteger)maxInstanceCount;
++ (SubsectionCircularView *)createShaperCircularViewWithFrame:(CGRect)frame superView:(UIView *)superView instanceCount:(NSUInteger)instanceCount maxInstanceCount:(NSUInteger)maxInstanceCount;
 @end

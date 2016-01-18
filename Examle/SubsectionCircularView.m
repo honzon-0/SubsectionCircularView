@@ -13,19 +13,29 @@
 @property (nonatomic, strong)CAReplicatorLayer *backgroundReplicator;
 @property (nonatomic, assign)CGFloat instanceWidth;
 @property (nonatomic, assign)CGFloat instanceHeight;
+
+@property (nonatomic, strong)CAShapeLayer *shaper;
+
 @end
 
 @implementation SubsectionCircularView
 -(void)setInstanceCount:(NSUInteger)instanceCount {
     self.replicator.instanceCount = instanceCount;
-   _progress =(float)instanceCount/self.maxInstanceCount;
+    _progress =(float)instanceCount/self.maxInstanceCount;
     NSString *text = [NSString stringWithFormat:@"%lu %@",100 *instanceCount/self.maxInstanceCount,@"%"];
     self.textLabel.text =text;
 }
 
 - (void)setProgress:(float)progress{
     if (!(_progress == progress)) {
-        self.instanceCount = progress *self.maxInstanceCount;
+        _progress = progress;
+        if (self.shaper) {
+            self.shaper.strokeEnd = progress;
+            NSString *text = [NSString stringWithFormat:@"%.f %@",100*progress,@"%"];
+            self.textLabel.text =text;
+        }else {
+             self.instanceCount = progress *self.maxInstanceCount;
+        }
     }
 }
 
@@ -39,18 +49,12 @@
     if (self) {
         [self createInnerCircleView];
         if (maxInstanceCount <= 0) {//给定默认最大值
-            maxInstanceCount = 180;
+            maxInstanceCount = 40;
         }
         self.maxInstanceCount = maxInstanceCount;
-        self.instanceWidth = 1.0;//小条默认宽度
+        self.instanceWidth = 5.0;//小条默认宽度
         self.instanceHeight = 10.0;//小条默认高度
-        self.backgroundReplicator = [self createReplicatorColor:[UIColor grayColor] instanceCount:self.maxInstanceCount];
-        self.replicator =  [self createReplicatorColor:[UIColor greenColor]instanceCount:instanceCount];
         
-        [self.layer addSublayer:self.backgroundReplicator];
-        [self.layer addSublayer:self.replicator];
-        
-        self.instanceCount = instanceCount;
     }
     return self;
 }
@@ -72,14 +76,51 @@
     [self addSubview:innerCircleView];
 }
 
+/**** two CAReplicatorLayer****/
 
 + (SubsectionCircularView *)createSubsectionCircularViewWithFrame:(CGRect)frame superView:(UIView *)superView  instanceCount:(NSUInteger)instanceCount maxInstanceCount:(NSUInteger)maxInstanceCount{
     SubsectionCircularView *circularView = [[SubsectionCircularView alloc] initWithFrame:frame instanceCount:instanceCount maxInstanceCount:maxInstanceCount];
+    
+    circularView.backgroundReplicator = [circularView createReplicatorColor:[UIColor grayColor] instanceCount:circularView.maxInstanceCount];
+    circularView.replicator =  [circularView createReplicatorColor:[UIColor greenColor]instanceCount:instanceCount];
+     circularView.instanceCount = instanceCount;
+    
+    [circularView.layer addSublayer:circularView.backgroundReplicator];
+    [circularView.layer addSublayer:circularView.replicator];
+    [superView addSubview:circularView];
+    
+    return circularView;
+}
+
+/****CAReplicatorLayer + CAShaper****/
+
++ (SubsectionCircularView *)createShaperCircularViewWithFrame:(CGRect)frame superView:(UIView *)superView instanceCount:(NSUInteger)instanceCount maxInstanceCount:(NSUInteger)maxInstanceCount{
+    SubsectionCircularView *circularView = [[SubsectionCircularView alloc] initWithFrame:frame instanceCount:instanceCount maxInstanceCount:maxInstanceCount];
+    [circularView drawSubsectionCircularView];
+    
     [superView addSubview:circularView];
     return circularView;
 }
 
-//添加外层
+- (void)drawSubsectionCircularView {
+    CAShapeLayer *shaper = [CAShapeLayer layer];
+    shaper.lineWidth = self.instanceHeight*2;
+    
+    shaper.fillColor = [UIColor grayColor].CGColor;
+    shaper.strokeColor = [UIColor greenColor].CGColor;
+    shaper.strokeStart = 0.0;
+    shaper.strokeEnd = 0.0;
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+    shaper.path = path.CGPath;
+    
+    CAReplicatorLayer * backgroundReplicator = [self createReplicatorColor:[UIColor grayColor] instanceCount:self.maxInstanceCount];
+    [shaper setMask:backgroundReplicator];
+    self.shaper = shaper;
+    [self.layer addSublayer:shaper];
+}
+
+
+//CAReplicatorLayer
 - (CAReplicatorLayer *)createReplicatorColor:(UIColor *)color instanceCount:(NSUInteger)instanceCount{
     CAReplicatorLayer * replicator = [CAReplicatorLayer layer];
     replicator.frame = CGRectMake(self.center.x/2+2*self.instanceHeight, 0, 0, self.frame.size.width);
