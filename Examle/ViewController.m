@@ -22,7 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-#define ShaperCircularView 0
+#define ShaperCircularView 1
 #if ShaperCircularView
     SubsectionCircularView *circularView =  [SubsectionCircularView createShaperCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 200, 200) superView:self.view instanceCount:1 maxInstanceCount:40];
     self.isShaper = YES;
