@@ -93,6 +93,8 @@
     CALayer * layer = [CALayer layer];
     layer.frame = CGRectMake(0, 0, self.instanceWidth, self.instanceHeight);
     layer.backgroundColor = color.CGColor;
+    layer.edgeAntialiasingMask = kCALayerBottomEdge|kCALayerLeftEdge | kCALayerRightEdge | kCALayerTopEdge;
+    layer.allowsEdgeAntialiasing = YES;
     [replicator addSublayer:layer];
     
     replicator.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);//改变初始位置
