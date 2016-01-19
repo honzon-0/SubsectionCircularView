@@ -110,15 +110,17 @@
     shaper.strokeColor = [UIColor greenColor].CGColor;
     shaper.strokeStart = 0.0;
     shaper.strokeEnd = 0.0;
-    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+    UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:self.bounds];
     shaper.path = path.CGPath;
     
     CAReplicatorLayer * backgroundReplicator = [self createReplicatorColor:[UIColor grayColor] instanceCount:self.maxInstanceCount];
     [shaper setMask:backgroundReplicator];
     
+    shaper.bounds = CGPathGetBoundingBox(shaper.path);
+    shaper.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
+    
     CATransform3D transform = CATransform3DIdentity;
-    transform = CATransform3DRotate(transform, M_PI_2, 0, 0, 1);//旋转之后 会平移 暂时不知道原因
-    transform = CATransform3DTranslate(transform, 0, -self.frame.size.width, 0);
+    transform = CATransform3DRotate(transform, M_PI_2, 0, 0, 1);
     shaper.transform = transform;
     
     self.shaper = shaper;
