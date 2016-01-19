@@ -118,10 +118,7 @@
     
     shaper.bounds = CGPathGetBoundingBox(shaper.path);
     shaper.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    
-    CATransform3D transform = CATransform3DIdentity;
-    transform = CATransform3DRotate(transform, M_PI_2, 0, 0, 1);
-    shaper.transform = transform;
+    shaper.transform = CATransform3DMakeRotation(M_PI_2, 0, 0, 1);
     
     self.shaper = shaper;
     [self.layer addSublayer:shaper];
