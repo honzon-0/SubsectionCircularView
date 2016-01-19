@@ -115,8 +115,15 @@
     
     CAReplicatorLayer * backgroundReplicator = [self createReplicatorColor:[UIColor grayColor] instanceCount:self.maxInstanceCount];
     [shaper setMask:backgroundReplicator];
+    
+    CATransform3D transform = CATransform3DIdentity;
+    transform = CATransform3DRotate(transform, M_PI_2, 0, 0, 1);//旋转之后 会平移 暂时不知道原因
+    transform = CATransform3DTranslate(transform, 0, -self.frame.size.width, 0);
+    shaper.transform = transform;
+    
     self.shaper = shaper;
     [self.layer addSublayer:shaper];
+    
 }
 
 
@@ -135,7 +142,7 @@
     layer.frame = CGRectMake(0, 0, self.instanceWidth, self.instanceHeight);
     layer.backgroundColor = color.CGColor;
     
-    //解决据此话问题
+    //解决锯齿化问题
     layer.edgeAntialiasingMask = kCALayerBottomEdge|kCALayerLeftEdge | kCALayerRightEdge | kCALayerTopEdge;
     layer.allowsEdgeAntialiasing = YES;
     
