@@ -62,9 +62,9 @@
 
 - (float)repairProgress:(float)progress {
     NSInteger  minInstanceCount = progress *self.maxInstanceCount;
-    NSUInteger a = minInstanceCount *10000;
-    CGFloat b= a/self.maxInstanceCount;
-    return b/10000;
+    NSUInteger repaiMin = minInstanceCount *10000;
+    CGFloat repairFloat= repaiMin/self.maxInstanceCount;
+    return repairFloat/10000;
 }
 
 //添加内层试图
