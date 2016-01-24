@@ -16,6 +16,7 @@
 @property (nonatomic, assign, readwrite)NSUInteger maxInstanceCount;
 @property (nonatomic, strong)UILabel *textLabel;
 @property (nonatomic, assign)CGFloat instanceHeight;
+@property (nonatomic, assign)CGFloat instanceWidth;
 @property (nonatomic, strong)CAShapeLayer *shaper;
 @end
 
@@ -39,6 +40,13 @@
     }
 }
 
+-(CGFloat)instanceWidth{
+    if (_instanceWidth || _instanceWidth == 0) {
+        _instanceWidth = kDEFAULT_INSTANCE_WIDTH;
+    }
+    return _instanceWidth;
+}
+
 -(CGFloat)instanceHeight{
     if (_instanceHeight || _instanceHeight == 0) {
         _instanceHeight = kDEFAULT_INSTANCE_HEIGHT;
@@ -51,6 +59,8 @@
     if (_progress != repairProgress) {
         _progress = repairProgress;
         self.shaper.strokeEnd = repairProgress;
+    }else{
+        _progress = progress;
     }
     
     if (_progress > 1) {
@@ -91,6 +101,7 @@
     circularView.instanceCount = instanceCount;
     circularView.instantLayer = instantLayer;
     if (instantLayer) {
+        circularView.instanceWidth = instantLayer.frame.size.width;
         circularView.instanceHeight = instantLayer.frame.size.height;
     }
     [circularView drawSubsectionCircularView];
@@ -140,10 +151,10 @@
 //CAReplicatorLayer
 - (CAReplicatorLayer *)createReplicator{
     CAReplicatorLayer * replicator = [CAReplicatorLayer layer];
-    replicator.frame = CGRectMake(self.frame.size.width/2, 0, 0, self.frame.size.width);
+    replicator.frame = CGRectMake(self.frame.size.width/2-self.instanceWidth/2, 0, self.instanceWidth, self.frame.size.width);
     replicator.instanceCount = self.maxInstanceCount;
-    replicator.instanceTransform = CATransform3DMakeRotation(M_PI*2 /self.maxInstanceCount , 0, 0, 1);;
-    
+    replicator.instanceTransform = CATransform3DMakeRotation(M_PI*2/self.maxInstanceCount , 0, 0, 1);;
+    replicator.transform  = CATransform3DMakeRotation(M_PI/2,0,0,1);//与shaper 起点重合
     [replicator addSublayer:self.instantLayer];
     
     return replicator;

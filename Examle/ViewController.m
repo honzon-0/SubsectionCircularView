@@ -22,7 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    SubsectionCircularView *circularView =  [SubsectionCircularView createShaperCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 100, 100) superView:self.view instanceCount:1 maxInstanceCount:33 instanctLayer:nil];
+    SubsectionCircularView *circularView =  [SubsectionCircularView createShaperCircularViewWithFrame:CGRectMake(k_SCREEN_WIDTH/2 - 100, k_SCREEN_HEIGHT/2 - 100, 100, 100) superView:self.view instanceCount:0 maxInstanceCount:8 instanctLayer:nil];
    
     self.circularView = circularView;
     [self addCircularViewTimer];
